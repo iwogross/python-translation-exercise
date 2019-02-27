@@ -39,13 +39,14 @@ def get_reverse(sequence):
 
     If `sequence` is empty, an empty string is returned.
     """
-    str = ""
+    stg = ""
     if len(sequence) == 0:
         return ''
     else:
         for i in sequence:
-            str= i + str
-    return str.upper()
+            stg= i + stg
+    return stg.upper()
+
 
 def get_complement(sequence):
     """Get the complement of `sequence`.
@@ -54,13 +55,11 @@ def get_complement(sequence):
 
     If `sequence` is empty, an empty string is returned.
     """
-    str = ""
-    if len(sequence) == 0:
-        return ''
+    dict = {'A': 'U', 'C': 'G', 'G': 'C', 'U': 'A'}
+    if len(sequence) > 0:
+        return ''.join([dict[base] for base in sequence[:]])
     else:
-        for i in sequence:
-            str= i + str
-    return str.upper()
+        return ''
 
 def reverse_and_complement(sequence):
     """Get the reversed and complemented form of `sequence`.
@@ -70,7 +69,23 @@ def reverse_and_complement(sequence):
 
     If `sequence` is empty, an empty string is returned.
     """
-    pass
+    comp = ""
+    if len(sequence) == 0:
+        return ''
+    else:
+        for i in sequence:
+            comp = i + comp
+    return comp.upper()
+
+    comp = comp.upper()
+    revcomp = ""
+    dict = {'A': 'U', 'C': 'G', 'G': 'C', 'U': 'A'}
+    if len(comp) > 0:
+        revcomp = ''.join([dict[base] for base in comp[:]])
+        return revcomp
+    else:
+        return ''
+
 
 def get_longest_peptide(rna_sequence, genetic_code):
     """Get the longest peptide encoded by an RNA sequence.
