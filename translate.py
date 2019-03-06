@@ -56,6 +56,7 @@ def get_reverse(sequence):
             stg= i + stg
     return stg.upper()
 
+    # return sequence[::-1]
 
 def get_complement(sequence):
     """Get the complement of `sequence`.
@@ -69,6 +70,12 @@ def get_complement(sequence):
         return ''.join([dict[base] for base in sequence[:]])
     else:
         return ''
+#   comp_seq = ""
+#   sequence = sequence.upper()
+#   for c in sequence:
+#       comp_seq = comp_seq + dict[c]
+#       or comp_seq += comp_bases[c]
+#   return comp_seq
 
 def reverse_and_complement(sequence):
     """Get the reversed and complemented form of `sequence`.
@@ -94,6 +101,9 @@ def reverse_and_complement(sequence):
         return revcomp
     else:
         return ''
+
+#   OR!
+#   return get_reverse(get_complement(sequence))
 
 
 def get_longest_peptide(rna_sequence, genetic_code):
