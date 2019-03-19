@@ -2,6 +2,15 @@
 
 import sys
 
+def pop_next_codon(sequence):
+    """Removes and returns the first 3 bases.
+    Returns a tuple of a string of the first three bases and a string of the
+    remaining sequence.
+    """
+    codon = sequence[0:3]
+    remaining_seq = sequence[3:]
+    return codon, remaining_seq
+
 def translate_sequence(rna_sequence, genetic_code):
     """Translates a sequence of RNA into a sequence of amino acids.
 
@@ -13,7 +22,19 @@ def translate_sequence(rna_sequence, genetic_code):
     If `rna_sequence` is less than 3 bases long, or starts with a stop codon,
     an empty string is returned.
     """
-    amino_sequence = ""
+    rna_sequence = rna_sequence.upper()
+    amino_acid_list = []
+    while True:
+        if len(rna_sequence) < 3:
+            break
+        codon, remaining_seq = pop_next_codon(rna_sequence)
+        rna_sequence = remaining_seq
+        aa = genetic_code[codon]
+        if aa == "*":
+            break
+        amino_acid_list.append(aa)
+    return "".join(amino_acid_list)
+    """ amino_sequence = ""
     for i in range(0, len(rna_sequence)-(3+len(rna_sequence)%3), 3):
         if genetic_code[rna_sequence[i:i+3]] == "*" :
             break
@@ -22,7 +43,7 @@ def translate_sequence(rna_sequence, genetic_code):
         else:
             amino_sequence += genetic_code[rna_sequence[i:i+3]]
 
-    return amino_sequence
+    return amino_sequence"""
 
 def get_all_translations(rna_sequence, genetic_code):
     """Get a list of all amino acid sequences encoded by an RNA sequence.
@@ -39,7 +60,23 @@ def get_all_translations(rna_sequence, genetic_code):
     If no amino acids can be translated from `rna_sequence`, an empty list is
     returned.
     """
-    pass
+
+    rna_sequence = rna_sequence.upper()
+    number_of_bases = len(rna_sequence)
+    last_codon_index = number_of_bases - 3
+    if last_codon_index < 0:
+        return []
+    amino_acid_seq_list = []
+    for base_index in range(last_codon_index + 1):
+        codon = rna_sequence[base_index: base_index + 3]
+        if codon == "AUG":
+            aa_seq = translate_sequence(
+                    rna_sequence = rna_sequence[base_index:],
+                    genetic_code = genetic_code)
+            if aa_seq:
+                amino_acid_seq_list.append(aa_seq)
+    return amino_acid_seq_list
+
 
 def get_reverse(sequence):
     """Reverse orientation of `sequence`.
@@ -66,16 +103,18 @@ def get_complement(sequence):
     If `sequence` is empty, an empty string is returned.
     """
     dict = {'A': 'U', 'C': 'G', 'G': 'C', 'U': 'A'}
+    """if len(sequence) > 0:
+        return ''.join([dict[base] for base in sequence])
+    else:
+        return ''"""
+    comp_seq = ""
+    sequence = sequence.upper()
     if len(sequence) > 0:
-        return ''.join([dict[base] for base in sequence[:]])
+        for c in sequence:
+            comp_seq += dict[c]
+        return comp_seq
     else:
         return ''
-#   comp_seq = ""
-#   sequence = sequence.upper()
-#   for c in sequence:
-#       comp_seq = comp_seq + dict[c]
-#       or comp_seq += comp_bases[c]
-#   return comp_seq
 
 def reverse_and_complement(sequence):
     """Get the reversed and complemented form of `sequence`.
@@ -85,7 +124,7 @@ def reverse_and_complement(sequence):
 
     If `sequence` is empty, an empty string is returned.
     """
-    comp = ""
+    """    comp = ""
     if len(sequence) == 0:
         return ''
     else:
@@ -102,8 +141,8 @@ def reverse_and_complement(sequence):
     else:
         return ''
 
-#   OR!
-#   return get_reverse(get_complement(sequence))
+    OR!"""
+    return get_reverse(get_complement(sequence))
 
 
 def get_longest_peptide(rna_sequence, genetic_code):
@@ -117,7 +156,23 @@ def get_longest_peptide(rna_sequence, genetic_code):
     If no amino acids can be translated from `rna_sequence` nor its reverse and
     complement, an empty list is returned.
     """
-    pass
+    peptides = get_all_translations(rna_sequence = rna_sequence,
+            genetic_code = genetic_code)
+    rev_comp_seq = reverse_and_complement(rna_sequence)
+    rev_comp_peptides = get_all_translations(rna_sequence = rev_comp_seq,
+            genetic_code = genetic_code)
+    peptides += rev_comp_peptides
+    if not peptides:
+        return ""
+    if len(peptides) < 2:
+        return peptides[0]
+    most_number_of_bases = -1
+    longest_peptide_index = -1
+    for peptide_index, aa_seq in enumerate(peptides):
+        if len(aa_seq) > most_number_of_bases:
+            longest_peptide_index = peptide_index
+            most_number_of_bases = len(aa_seq)
+    return peptides[longest_peptide_index]
 
 
 if __name__ == '__main__':
